@@ -7,6 +7,16 @@ app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres@localhost/
 
 db=SQLAlchemy(app)
 
+class loginData(db.Model):
+  __tablename__='loginData'
+  id=db.Column(db.Integer,primary_key=True)
+  username=db.Column(db.String(40))
+  password=db.Column(db.String(10))
+
+  def __init__(self,username,password):
+    self.username=username
+    self.password=password
+
 class Student(db.Model):
   __tablename__='students'
   id=db.Column(db.Integer,primary_key=True)
@@ -23,6 +33,20 @@ class Student(db.Model):
 @app.route('/')
 def index():
   return render_template('index.html')
+
+@app.route('/login')
+def login():
+  return render_template('login.html')
+
+@app.route('/checkLogin', methods=['POST'])
+def checkLogin():
+  username=request.form['username']
+  password=request.form['password']
+
+  if username=='admin' and password=='admin':
+    return render_template('loginStatus.html', status= "success", username=username)
+  else:
+    return render_template('loginStatus.html', status= "failure", username=username)
 
 @app.route('/submit', methods=['POST'])
 def submit():
